@@ -1,46 +1,27 @@
 "use client"
+import { useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import BreadcrumbsBlock from "@/components/UI/breadcrumbs";
+import Categories from "@/components/UI/catrgories";
+import ProductsCardBlock from "@/components/UI/productsCards/productsCardBlock";
 import SearchBar from "@/components/UI/searchBar";
-import { IProduct } from "@/types";
-import { useState } from "react";
 
 export default function Home() {
+	const [inputValue, setInputValue] = useState('')
+	const searchParams = useSearchParams()
+	const router = useRouter()
+	const category = searchParams?.get('category') ?? undefined
 
- 	const [products, setProducts] = useState<IProduct[]>([])
-  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [searchMode, setSearchMode] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+	const onCategorySelect = (cat: string) => {
+		router.push(cat === 'all' ? '/' : `?category=${cat}`)
+	}
 
-	  async function handleSearch(query: string) {
-    if (!query.trim()) {
-      setFilteredProducts(products)
-      setSelectedCategory('all')
-      setSearchMode(false)
-      return
-    }
-    try {
-      setLoading(true)
-      setSearchMode(true)
-      const res = await fetch(`https://dummyjson.com/products/search?q=${encodeURIComponent(query)}`)
-      if (!res.ok) throw new Error('Failed to search products')
-      const data = await res.json()
-      setFilteredProducts(data.products)
-      setSelectedCategory('all')
-      setError(null)
-    } catch (err) {
-      setError('Ошибка поиска товаров')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
+	return (
 		<>
-		<BreadcrumbsBlock />
-		<SearchBar onSearch={handleSearch} />
+			<BreadcrumbsBlock />
+			<SearchBar value={inputValue} onChange={setInputValue} onCategorySelect={onCategorySelect} />
+			<Categories />
+			<ProductsCardBlock inputValue={inputValue} category={category} />
 		</>
-  );
+	);
 }
