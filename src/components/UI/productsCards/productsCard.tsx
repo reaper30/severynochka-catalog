@@ -4,9 +4,10 @@ import Link from "next/link";
 import { Heart } from 'lucide-react';
 import Image from "next/image";
 import { Chip } from "@heroui/chip";
+import { IProduct } from "@/types";
 
 
-const ProductsCard = ({ productItem }) => {
+const ProductsCard = ({ productItem }: { productItem: IProduct }) => {
 	const discountedPrice = productItem.price * (1 - (productItem.discountPercentage ?? 0) / 100)
 
 	return (<>
@@ -22,7 +23,7 @@ const ProductsCard = ({ productItem }) => {
 						)}
 						{/* Кнопка избранное */}
 						<button
-							className="z-10 absolute top-2 right-2 rounded-sm p-1 bg-[#F3F2F1]/50 text-black/50 transition"
+							className=" absolute top-2 right-2 rounded-sm p-1 bg-[#F3F2F1]/50 text-black/50 transition"
 						>
 							<Heart strokeWidth={1} className="w-6 h-6" />
 						</button>

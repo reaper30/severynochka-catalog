@@ -1,26 +1,43 @@
 'use client'
 import { Input } from '@heroui/react'
 import { Search } from 'lucide-react';
-import { useCategories } from '@/hooks/useCategories';
+import { useCategories } from '../../hooks/useCategories';
 import { useState } from 'react';
 
 type SearchBarProps = {
-	value: string
-	onChange: (v: string) => void
 	onCategorySelect: (category: string) => void
 }
 
-const SearchBar = ({ value, onChange, onCategorySelect }: SearchBarProps) => {
+const SearchBar = ({ onCategorySelect }: SearchBarProps) => {
 	const [isOpen, setIsOpen] = useState(false)
-
+	const [value, setValue] = useState('')
 	const { data: categoriesData } = useCategories()
+
 	const filteredCategories = categoriesData?.filter(cat =>
 		cat.name.toLowerCase().includes(value.toLowerCase()) && value.length > 0
 	) ?? []
 
+
 	const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-		onChange(e.target.value)
-		setIsOpen(e.target.value.length > 0 && filteredCategories.length > 0)
+		const newValue = e.target.value
+		setValue(newValue)
+		const filtered = categoriesData?.filter(cat =>  // фильтруем категории отсюда так как Value в setstate обновляется не сразу, поэтому при вводе 1-го символа он еще пустой, что не позволит фильтровать с 1-го символа
+			cat.name.toLowerCase().includes(newValue.toLowerCase()) && newValue.length > 0
+		) ?? []
+		setIsOpen(newValue.length > 0 && filtered.length > 0)
+	}
+
+	const highlightMatch = (text: string, query: string) => {
+		if (!query) return text
+		const regex = new RegExp(`(${query})`, 'gi')
+		const parts = text.split(regex)
+		return parts.map((part, i) => (
+			regex.test(part) ? (
+				<span key={i} className="text-[#70C05B] font-semibold">{part}</span>
+			) : (
+				<span key={i}>{part}</span>
+			)
+		))
 	}
 
 	return (
@@ -38,24 +55,23 @@ const SearchBar = ({ value, onChange, onCategorySelect }: SearchBarProps) => {
 						size="lg"
 						classNames={{
 							input: "text-black pr-10",
-							inputWrapper: "bg-white shadow-sm w-full border-2 border-[#70C05B] data-[hover=true]:bg-white data-[hover=true]:shadow-lg data-[hover=true]:shadow-[#70C05B]/20 group-data-[focus=true]:bg-default-0",
+							inputWrapper: `bg-white shadow-sm transition-shadow !duration-200 w-full border-2 border-[#70C05B] data-[hover=true]:bg-white data-[hover=true]:shadow-lg data-[hover=true]:shadow-[#70C05B]/20 group-data-[focus=true]:bg-default-0 rounded-t-md  ${isOpen ? "rounded-b-none" : "rounded-b-md"}`,
 						}}
 					/>
 					{isOpen && filteredCategories.length > 0 && (
-						<div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
+						<div className="absolute top-[100%] left-0 right-0 bg-white border-l-2 border-r-2 border-b-2 border-[#70C05B] rounded-b-md shadow-lg z-10 max-h-60 overflow-y-auto -mt-[2px]">
 							{filteredCategories.map(category => (
 								<button
 									key={category.slug}
-									className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
+									className="w-full text-left px-4 py-2 hover:bg-gray-100 transition first:pt-3"
 									onClick={() => {
 										onCategorySelect(category.slug)
-										onChange('')
+										setValue('')
 										setIsOpen(false)
 									}}
 								>
 									<p className="text-black">
-										{category.name}
-
+										{highlightMatch(category.name, value)}
 									</p>
 								</button>
 							))}

@@ -1,11 +1,8 @@
 "use client"
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, Badge } from "@heroui/react";
-import { Menu } from 'lucide-react';
-import { Heart } from 'lucide-react';
-import { Package } from 'lucide-react';
-import { ShoppingCart } from 'lucide-react';
-import { ChevronDown } from 'lucide-react';
+import { Menu, ChevronDown } from 'lucide-react';
 import { User } from "@heroui/react";
+import { headerNavItems } from "@/config/header.config";
 
 export default function App() {
 
@@ -16,9 +13,12 @@ export default function App() {
 			maxWidth="full"
 		>
 			<div className="max-w-[1208px] w-full mx-auto flex items-center">
-				{/* Logo/Brand with Catalog Button */}
+
+				{/* Лого/название с кнопками */}
 				<NavbarBrand className="flex items-center ">
-					<p className=" mr-10 flex text-lg items-center  font-extrabold text-black">Магазин</p>
+					<Link href="/" className="flex items-center">
+						<p className=" mr-10 flex text-lg items-center  font-extrabold text-black">Магазин</p>
+					</Link>
 					<Button
 						color="primary"
 						variant="solid"
@@ -31,30 +31,26 @@ export default function App() {
 
 				{/*Navigation Items*/}
 				<NavbarContent className="hidden sm:flex gap-5 mr-10" justify="end">
-
-					<NavbarItem>
-						<Link href="#" className="flex flex-col items-center">
-							<Heart className="text-black mb-1" strokeWidth={1} />
-							<p className="text-xs text-black">Избранное</p>
-						</Link>
-					</NavbarItem>
-					<NavbarItem>
-						<Link href="#" className="flex flex-col items-center">
-							<Package className="text-xl mb-1 text-black" strokeWidth={1} />
-							<p className="text-xs text-black">Заказы</p>
-						</Link>
-					</NavbarItem>
-					<NavbarItem>
-						<Link href="#" className="flex flex-col items-center">
-							<Badge showOutline={false} content="1" size="sm" className="text-white bg-orange-500">
-								<ShoppingCart className="text-xl mb-1 text-black" strokeWidth={1} />
-							</Badge>
-							<p className="text-xs text-black">Корзина</p>
-						</Link>
-					</NavbarItem>
+					{headerNavItems.map((item) => {
+						const IconComponent = item.icon;
+						return (
+							<NavbarItem key={item.label}>
+								<Link href={item.href} className="flex flex-col items-center">
+									{item.badge ? (
+										<Badge showOutline={false} content={item.badge} size="sm" className="text-white bg-orange-500">
+											<IconComponent className="text-xl mb-1 text-black" strokeWidth={1} />
+										</Badge>
+									) : (
+										<IconComponent className="text-black mb-1" strokeWidth={1} />
+									)}
+									<p className="text-xs text-black">{item.label}</p>
+								</Link>
+							</NavbarItem>
+						);
+					})}
 				</NavbarContent>
 
-				{/* User Profile */}
+				{/* Профиль пользователя */}
 				<NavbarContent justify="end" className=" !flex-[0_0_auto] ">
 					<NavbarItem className="flex items-center">
 						<User

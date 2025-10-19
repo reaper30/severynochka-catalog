@@ -2,23 +2,24 @@
 import Link from 'next/link'
 import { Button } from '@heroui/react'
 import Image from 'next/image'
-import { footerConfig, footerIcons } from '@/config/footer.config'
+import { footerConfig, footerIconsConfig } from '@/config/footer.config'
 
 const Footer = () => {
 	return (
 		<footer className="bg-orange-50 border-t border-gray-200 mt-16">
-			<div className=" mx-auto px-3  py-8	">
+			<div className=" mx-auto  py-9 px-26">
 				<div className="flex flex-wrap items-center justify-between gap-6">
-					<div className="flex flex-wrap items-center gap-6 text-sm ">
+					{/* Текст  слева у Footer */}
+					<div className="flex flex-wrap items-center gap-10 text-sm ">
 						{footerConfig.map((item) => (
 							<Link key={item.label} href={item.href} className={item.style}>
 								{item.label}
 							</Link>
 						))}
 					</div>
-
+					{/* Иконки + номер телефона в Footer */}
 					<div className="flex items-center gap-4">
-						{footerIcons.map((item) => (
+						{footerIconsConfig.map((item) => (
 							<Button
 								key={item.label}
 								as={Link}

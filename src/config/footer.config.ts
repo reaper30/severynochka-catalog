@@ -10,7 +10,7 @@ export const footerConfig = [
 	{ href: "/", label: "Политика обработки персональных данных", style: defaultStyle },
 ]
 
-export const footerIcons = [
+export const footerIconsConfig = [
 	{ href: "/", label: "Instagram", icon: "/instagram.svg" },
 	{ href: "/", label: "VK", icon: "/vk.svg" },
 	{ href: "/", label: "Facebook", icon: "/facebook.svg" },

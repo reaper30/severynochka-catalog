@@ -17,46 +17,55 @@ interface ProductsQueryParams {
 	q?: string
 }
 
-async function fetchProductsPage(
+// Фцнкция получения продукции по категориям или просто продукты
+const fetchProductsPage = async (
 	pageParam: number,
-	inputValue?: string,
-	category?: string
-): Promise<ProductsResponse> {
-	const params: ProductsQueryParams = { limit: PRODUCTS_PER_PAGE, skip: pageParam }
-	const q = inputValue && inputValue.trim() !== '' ? inputValue.trim() : undefined
+	category?: string | null
+): Promise<ProductsResponse | undefined> => {
+	try {
+		const params: ProductsQueryParams = { limit: PRODUCTS_PER_PAGE, skip: pageParam }
+		let res
 
-	let res
+		if (category) {
+			res = await axiosInstance.get<ProductsResponse>(`/products/category/${encodeURIComponent(category)}`, { params })
+		} else {
+			res = await axiosInstance.get<ProductsResponse>(`/products`, { params })
+		}
 
-	if (category && category !== 'all') {
-		res = await axiosInstance.get<ProductsResponse>(`/products/category/${encodeURIComponent(category)}`, { params })
-	} else if (q) {
-		res = await axiosInstance.get<ProductsResponse>(`/products/search`, { params: { ...params, q } })
-	} else {
-		res = await axiosInstance.get<ProductsResponse>(`/products`, { params })
+		const data: ProductsResponse = res.data
+		return data
+	} catch (error) {
+		console.error(error)
+		return undefined
 	}
-
-	const data: ProductsResponse = res.data
-
-	// apply lightweight client-side title filter when q provided
-	if (q) {
-		const qLower = q.toLowerCase()
-		data.products = data.products.filter((p) => (p.title || '').toLowerCase().includes(qLower))
-	}
-
-	return data
 }
 
-export function useInfiniteProducts({ inputValue, category }: { inputValue?: string; category?: string }) {
-	return useInfiniteQuery<ProductsResponse, unknown, ProductsResponse>({
-		queryKey: ['products', PRODUCTS_PER_PAGE, inputValue ?? null, category ?? null],
+// Функция для получения одного товара
+export const fetchProductById = async (id: string): Promise<IProduct> => {
+	try {
+		const response = await axiosInstance.get<IProduct>(`/products/${id}`)
+
+		return response.data
+	}
+	catch (error) {
+		console.error(error)
+		throw new Error('Не удалось получить товар')
+	}
+};
+
+export function useInfiniteProducts({ category }: { category?: string | null }) {
+	return useInfiniteQuery({
+		queryKey: ['products', PRODUCTS_PER_PAGE, category ?? null],
 		queryFn: (context: { pageParam?: unknown }) => {
 			const pageParam = typeof context.pageParam === 'number' ? context.pageParam : 0
-			return fetchProductsPage(pageParam, inputValue, category)
+			return fetchProductsPage(pageParam, category)
 		},
 		getNextPageParam: (lastPage) => {
+			if (!lastPage) return undefined
 			const next = lastPage.skip + lastPage.limit
 			return next >= lastPage.total ? undefined : next
 		},
 		initialPageParam: 0,
 	})
 }
+

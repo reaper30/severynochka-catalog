@@ -1,7 +1,14 @@
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/thumbs';
+@import 'swiper/css/free-mode';
+
 @import "tailwindcss";
  @plugin './hero.ts';
  @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
  @custom-variant dark (&:is(.dark *));
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -25,4 +32,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.swiper {
+  padding: 0 ;
+  margin: 0 ;
+}
+
+.swiper-button-disabled {
+  opacity: 1 !important;
+  pointer-events: all !important;
+  cursor: pointer !important;
 }
