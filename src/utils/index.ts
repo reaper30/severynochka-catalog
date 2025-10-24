@@ -8,3 +8,4 @@ export const getReviewWord = (count: number): string => {
 	if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'отзыва';
 	return 'отзывов';
 };
+

@@ -1,6 +1,6 @@
 import { Heart, Package, ShoppingCart } from 'lucide-react';
 
-export const headerNavItems = [
+export const headerItemConfig = [
 	{
 		label: "Избранное",
 		icon: Heart,

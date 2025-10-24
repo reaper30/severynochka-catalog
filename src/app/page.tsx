@@ -1,8 +1,8 @@
 "use client"
 import { useSearchParams, useRouter } from 'next/navigation'
-import BreadcrumbsBlock from "@/components/UI/breadcrumbs";
-import ProductsCardBlock from "@/components/UI/productsCards/productsCardBlock";
-import SearchBar from "@/components/UI/searchBar";
+import HomePageBreadcrumbs from "@/components/homePage/homeProdcrumbs";
+import ProductsCardBlock from "@/components/homePage/productsCards/productsCardBlock";
+import SearchBar from "@/components/homePage/searchBar";
 
 export default function Home() {
 	const searchParams = useSearchParams()
@@ -10,12 +10,12 @@ export default function Home() {
 	const category = searchParams?.get("category") || null
 
 	const onCategorySelect = (cat: string) => {
-		router.push(cat === 'all' ? '/' : `?category=${cat}`)
+		router.push(`?category=${cat}`)
 	}
 
 	return (
 		<>
-			<BreadcrumbsBlock />
+			<HomePageBreadcrumbs />
 			<SearchBar onCategorySelect={onCategorySelect} />
 			<ProductsCardBlock category={category} />
 		</>

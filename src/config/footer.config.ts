@@ -1,8 +1,7 @@
 
-const defaultStyle = "text-[#414141] font-extralight hover:text-[#FF6633] transition";
+const defaultStyle = "text-black-100 hover:text-orange-100 text-[10px] md:text-[12px]";
 
 export const footerConfig = [
-	{ href: "/", label: "Магазин", style: "font-bold text-xl text-[#414141]" },
 	{ href: "/", label: "О компании", style: defaultStyle },
 	{ href: "/", label: "Контакты", style: defaultStyle },
 	{ href: "/", label: "Вакансии", style: defaultStyle },

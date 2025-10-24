@@ -1,6 +1,6 @@
 "use client"
 //import { useProducts } from "@/hooks/useProducts";
-import { useInfiniteProducts } from "../../../hooks/useProducts";
+import { useInfiniteProducts } from "@/hooks/useProducts";
 import ProductsCard from "./productsCard";
 import { Button, Spinner } from "@heroui/react";
 import { IProduct } from "@/types";
@@ -23,13 +23,12 @@ const ProductsCardBlock = ({ category }: { category?: string | null }) => {
 	});
 
 	if (allProducts.length === 0) {
-		return <div>Нет доступных товаров</div>;
+		return <div className="text-black-100 text-center text-xl">Товары не найдены 🤔</div>;
 	}
-
 	return (
 		<>
 			{/* Карточки товаров */}
-			<div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mb-8 w-full max-w-[1208px] mx-auto">
+			<div className="grid grid-cols-2 mx-auto gap-4 mr-2 ml-4 mb-6  md:grid-cols-3 md:gap-8 md:mx-4 desktop:grid-cols-4 desktop:gap-10 desktop:mx-29 desktop:mb-12 ">
 				{allProducts?.map((product: IProduct) => (
 					<ProductsCard key={product.id} productItem={product} />
 				)
@@ -37,10 +36,10 @@ const ProductsCardBlock = ({ category }: { category?: string | null }) => {
 			</div>
 			{/* Кнопка загрузки еще */}
 			{hasNextPage && (
-				<div className="text-center flex-wrap flex-col justify-center mx-auto max-w-[1208px]">
+				<div className="text-center mx-auto">
 					<Button onPress={() => fetchNextPage()}
 						disabled={isFetchingNextPage}
-						className="mb-5 w-[172px] px-4 py-2 border mt-3 border-black/25 rounded bg-white  hover:bg-zinc-100/50">
+						className=" px-6 py-2 text-[16px] border border-grey-200 rounded-sm bg-white-100 hover:border-orange-100">
 						{isFetchingNextPage ? (
 							<div className="flex items-center justify-center gap-2">
 								<Spinner size="sm" />

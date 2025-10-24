@@ -1,5 +1,4 @@
 'use client'
-import { Input } from '@heroui/react'
 import { Search } from 'lucide-react';
 import { useCategories } from '../../hooks/useCategories';
 import { useState } from 'react';
@@ -20,7 +19,9 @@ const SearchBar = ({ onCategorySelect }: SearchBarProps) => {
 
 	const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newValue = e.target.value
+
 		setValue(newValue)
+
 		const filtered = categoriesData?.filter(cat =>  // фильтруем категории отсюда так как Value в setstate обновляется не сразу, поэтому при вводе 1-го символа он еще пустой, что не позволит фильтровать с 1-го символа
 			cat.name.toLowerCase().includes(newValue.toLowerCase()) && newValue.length > 0
 		) ?? []
@@ -33,7 +34,7 @@ const SearchBar = ({ onCategorySelect }: SearchBarProps) => {
 		const parts = text.split(regex)
 		return parts.map((part, i) => (
 			regex.test(part) ? (
-				<span key={i} className="text-[#70C05B] font-semibold">{part}</span>
+				<span key={i} className="text-green-100 font-semibold">{part}</span>
 			) : (
 				<span key={i}>{part}</span>
 			)
@@ -41,25 +42,24 @@ const SearchBar = ({ onCategorySelect }: SearchBarProps) => {
 	}
 
 	return (
-		<div className="mb-8 w-full max-w-[1208px] mx-auto">
-			<h1 className="text-3xl font-bold mb-4 text-black">Поиск</h1>
+		<div className="flex flex-col gap-4 mb-6 mx-auto md:mb-12 desktop:mb-12  px-4 desktop:px-[116px] desktop:gap-6">
+			<h1 className="text-xl font-bold  text-black-100">Поиск</h1>
 			<form onSubmit={(e) => e.preventDefault()}>
-				<div className="relative w-full">
-					<Input
+
+				{/* Input */}
+				<div className="relative ">
+					<input
 						type="text"
-						radius="sm"
 						value={value}
 						onChange={onChangeInput}
 						placeholder="Найти товар"
-						variant="flat"
-						size="lg"
-						classNames={{
-							input: "text-black pr-10",
-							inputWrapper: `bg-white shadow-sm transition-shadow !duration-200 w-full border-2 border-[#70C05B] data-[hover=true]:bg-white data-[hover=true]:shadow-lg data-[hover=true]:shadow-[#70C05B]/20 group-data-[focus=true]:bg-default-0 rounded-t-md  ${isOpen ? "rounded-b-none" : "rounded-b-md"}`,
-						}}
+						className="border relative border-green-100 w-full rounded-sm p-2 text-black-100 placeholder:text-grey-100 outline-0"
 					/>
+					<Search strokeWidth={1} className=" absolute right-3 top-1/2 -translate-y-1/2 text-black-100 " />
+
+					{/* Строка результатов поиска категорий */}
 					{isOpen && filteredCategories.length > 0 && (
-						<div className="absolute top-[100%] left-0 right-0 bg-white border-l-2 border-r-2 border-b-2 border-[#70C05B] rounded-b-md shadow-lg z-10 max-h-60 overflow-y-auto -mt-[2px]">
+						<div className="absolute top-full left-0 right-0 bg-white border-1 border-t-0 border-green-100 rounded-b-md shadow-lg z-10 max-h-60 overflow-y-auto mt-0.5">
 							{filteredCategories.map(category => (
 								<button
 									key={category.slug}
@@ -70,15 +70,16 @@ const SearchBar = ({ onCategorySelect }: SearchBarProps) => {
 										setIsOpen(false)
 									}}
 								>
-									<p className="text-black">
+									<p className="text-black-100">
 										{highlightMatch(category.name, value)}
 									</p>
 								</button>
 							))}
 						</div>
 					)}
-					<Search className="absolute right-3 top-1/2 -translate-y-1/2 text-[#414141] pointer-events-none" />
 				</div>
+
+
 			</form>
 		</div>
 	)
