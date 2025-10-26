@@ -17,7 +17,7 @@ export interface IProduct {
 	warrantyInformation: string;
 	shippingInformation: string;
 	availabilityStatus: string;
-	reviews?: IReview[];
+	reviews: IReview[];
 	returnPolicy: string;
 	minimumOrderQuantity: number;
 	meta: IMeta;

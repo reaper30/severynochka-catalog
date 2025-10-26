@@ -10,7 +10,7 @@ export default function Home() {
 	const category = searchParams?.get("category") || null
 
 	const onCategorySelect = (cat: string) => {
-		router.push(`?category=${cat}`)
+		router.push(`?category=${encodeURIComponent(cat)}`)
 	}
 
 	return (

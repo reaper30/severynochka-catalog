@@ -1,10 +1,9 @@
 "use client"
-
-import { Star } from 'lucide-react'
 import { IReview } from '@/types'
+import StarRating from './StarRating'
 
 interface RatingHistogramProps {
-	reviews?: IReview[] | null,
+	reviews: IReview[],
 	rating: number
 }
 
@@ -12,19 +11,14 @@ const RatingHistogram = ({ reviews, rating }: RatingHistogramProps) => {
 
 	const counts = [5, 4, 3, 2, 1].map((rating) => ({
 		rating,
-		count: reviews ? reviews.filter(r => r.rating === rating).length : 0,
+		count: reviews.filter(r => r.rating === rating).length,
 	}))
 
 	return (
 		// Общий рейтинu продукта
 		<div className=" flex flex-col gap-4">
 			<div className="flex gap-1 items-center">
-				{[...Array(5)].map((_, i) => {
-					const filled = i < rating
-					return (
-						<Star key={i} size={16} strokeWidth={0.5} className={filled ? "fill-orange-100" : "fill-grey-200"} />
-					)
-				})}
+				<StarRating value={rating} size={16} strokeWidth={0.5} />
 				<span className="text-black-100 text-[18px] font-bold">{rating.toFixed()} из 5</span>
 			</div>
 
@@ -37,17 +31,7 @@ const RatingHistogram = ({ reviews, rating }: RatingHistogramProps) => {
 						{/* Звездочки */}
 						<div className="flex justify-center">
 							<div className="flex gap-1">
-								{[...Array(5)].map((_, i) => {
-									const filled = i < rating
-									return (
-										<Star
-											key={i}
-											size={16}
-											className={`${filled ? "fill-orange-100" : "fill-grey-200"}`}
-											strokeWidth={0.5}
-										/>
-									)
-								})}
+								<StarRating value={rating} size={16} strokeWidth={0.5} />
 							</div>
 						</div>
 

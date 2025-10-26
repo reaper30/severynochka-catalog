@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { IReview } from '@/types'
-import { Star, User } from 'lucide-react'
+import { User } from 'lucide-react'
+import StarRating from './StarRating'
 
 interface ReviewsProps {
-	reviews?: IReview[] | null
+	reviews: IReview[]
 }
 
 const Reviews = ({ reviews }: ReviewsProps) => {
-	const [localReviews] = useState<IReview[]>(reviews ?? [])
 	const [rating] = useState(0)
 	const [comment, setComment] = useState("")
 
@@ -17,8 +17,8 @@ const Reviews = ({ reviews }: ReviewsProps) => {
 		<div className="flex flex-col gap-4 md:gap-10 md:flex-1 ">
 			{/* Список отзывов */}
 			<div className="flex flex-col gap-4 md-gap-8 desktop:gap-10">
-				{localReviews.length === 0 && <p>Нет отзывов</p>}
-				{localReviews.map((r, i) => (
+				{reviews.length === 0 && <p>Нет отзывов</p>}
+				{reviews.map((r, i) => (
 					<div key={i} className=" flex flex-col rounded gap-2">
 
 						{/* Имя */}
@@ -30,9 +30,7 @@ const Reviews = ({ reviews }: ReviewsProps) => {
 						{/* звезды + дата */}
 						<div className="flex gap-4 items-center">
 							<div className="flex items-center gap-1 text-orange-100">
-								{[...Array(5)].map((_, i) => (
-									<Star key={i} size={14} className={i < r.rating ? 'fill-orange-100' : 'fill-grey-200'} strokeWidth={0} />
-								))}
+								<StarRating value={r.rating} size={14} strokeWidth={0} />
 							</div>
 							<span className="text-[10px]  text-grey-100 md:text-[12px]">{new Date(r.date).toLocaleDateString("ru-RU")}</span>
 						</div>
@@ -48,9 +46,7 @@ const Reviews = ({ reviews }: ReviewsProps) => {
 					<div className="flex items-center gap-4">
 						<label className="text-black-100 font-bold text-[18px]">Ваша оценка</label>
 						<div className="flex items-center gap-1">
-							{Array.from({ length: 5 }).map((_, i) => (
-								<Star key={i} size={24} className={i < rating ? "fill-orange-100" : "fill-grey-200"} strokeWidth={0.5} />
-							))}
+							<StarRating value={rating} size={24} strokeWidth={0.5} />
 						</div>
 					</div>
 					<textarea value={comment} onChange={e => setComment(e.target.value)} placeholder="Отзыв" className=" border border-grey-200 placeholder-black-100 text-black-100 px-4 py-2 rounded h-25" />

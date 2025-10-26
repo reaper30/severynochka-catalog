@@ -1,12 +1,10 @@
 'use client'
 
 import { ProductBreadcrumbs, ProductSummary, ImageSlider, ProductPricing } from '@/components/productPage'
-import { fetchProductById, useDiscountedProducts } from '@/hooks/useProducts'
-import { IProduct } from '@/types'
+import { useDiscountedProducts, useProduct, useRelatedProducts } from '@/hooks/useProducts'
 import { useParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { Spinner } from "@heroui/spinner";
-import { axiosInstance } from '@/services/instance'
 import RatingHistogram from '@/components/productPage/RatingHistogram'
 import Reviews from '@/components/productPage/Reviews'
 import RelatedProduct from '@/components/productPage/relatedProducts'
@@ -18,9 +16,9 @@ import ProductsCard from '@/components/homePage/productsCards/productsCard'
 const ProductPage = () => {
 	const { id } = useParams()
 	const productId = Array.isArray(id) ? id[0] : id
-	const [product, setProduct] = useState<IProduct | null>(null)
+	const { data: product, isLoading: isProductLoading, isError: isProductError, error: productError } = useProduct(productId)
 
-	const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]); // Массив продуктов в блоке "С жтим товаром покупают"
+	const { data: relatedProducts = [] } = useRelatedProducts(product?.category, product?.id, { enabled: !!product?.category, limit: 32 }) // получения связанных по категории товаров
 	const [relatedSlideIndex, setRelatedSlideIndex] = useState(0) // Состояние для слайдера связанных продуктов
 
 	const [relatedVisibleCount, setRelatedVisibleCount] = useState(2) // Кол-во  карточек в завис. от ширины экрана  в категории "С жтим товаром покупают"
@@ -44,7 +42,6 @@ const ProductPage = () => {
 					width >= 768 ? 3 :
 						6
 			)
-
 
 		}, 250)
 
@@ -77,31 +74,32 @@ const ProductPage = () => {
 			: [...product.images, ...Array(5 - product.images.length).fill(product.thumbnail)]
 	) : []
 
-	// загружаем товар по id
-	useEffect(() => {
-		const loadProduct = async () => {
-			if (!productId || isNaN(Number(productId))) return
-			try {
-				const product = await fetchProductById(productId)
-				setProduct(product)
 
-				// Загружаем похожие товары
-				if (product.category) {
-					const relatedRes = (await axiosInstance.get(`products/category/${product.category}`)).data
-					const filteredRelated = relatedRes.products.filter((p: IProduct) => p.id !== product.id)
+	// Ошибки и пустые данные обрабатываются раздельно
+	if (isProductLoading) {
+		return <Spinner color="warning" className="flex justify-center items-center py-12" />
+	}
 
-					setRelatedProducts(filteredRelated)
-				}
+	if (isProductError) {
+		return (
+			<div className="flex flex-col items-center justify-center py-12 gap-3 mx-3">
+				<p className="text-black-100 text-lg md:text-xl">Ошибка при загрузке товара</p>
+				{productError && (
+					<p className="text-grey-100 text-sm text-center max-w-prose">{productError instanceof Error ? productError.message : String(productError)}</p>
+				)}
+				<Link href="/" className="text-green-100 hover:text-orange-100 underline">На главную</Link>
+			</div>
+		)
+	}
 
-			} catch (error) {
-				console.error('Error fetching product:', error)
-			}
-		}
-		loadProduct()
-	}, [productId])
-
-
-	if (!product) return <Spinner color="warning" className="flex justify-center items-center py-12" />;
+	if (!product) {
+		return (
+			<div className="flex flex-col items-center justify-center py-12 gap-3 mx-3">
+				<p className="text-black-100 text-lg md:text-xl">Товар не найден</p>
+				<Link href="/" className="text-green-100 hover:text-orange-100 underline">Вернуться на главную</Link>
+			</div>
+		)
+	}
 
 	return (
 		<>

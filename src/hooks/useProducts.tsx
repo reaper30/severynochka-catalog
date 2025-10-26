@@ -1,15 +1,8 @@
-import { axiosInstance } from '@/services/instance'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { IProduct } from '@/types'
+import { getProductById as apiGetProductById, getProducts as apiGetProducts, getProductsByCategory as apiGetProductsByCategory, type ProductsResponse } from '@/services/products'
 
 const PRODUCTS_PER_PAGE = 16
-
-interface ProductsResponse {
-	limit: number
-	products: IProduct[]
-	skip: number
-	total: number
-}
 
 interface ProductsQueryParams {
 	limit: number
@@ -17,36 +10,40 @@ interface ProductsQueryParams {
 	q?: string
 }
 
-	// Фцнкция получения продукции по категориям или просто продукты
-	const fetchProductsPage = async (
-		pageParam: number,
-		category?: string | null
-	): Promise<ProductsResponse> => {
-		try {
-			const params: ProductsQueryParams = { limit: PRODUCTS_PER_PAGE, skip: pageParam }
-
-			const url = category ? `/products/category/${encodeURIComponent(category)}` : `/products`
-			const res = await axiosInstance.get<ProductsResponse>(url, { params })
-
-			return res.data
-		} catch (error) {
-			console.error(error)
-			throw new Error("Failed to fetch products")
-
+// Фцнкция получения продукции по категориям или просто продукты
+const fetchProductsPage = async (
+	pageParam: number,
+	category?: string | null
+): Promise<ProductsResponse> => {
+	try {
+		const params: ProductsQueryParams = { limit: PRODUCTS_PER_PAGE, skip: pageParam }
+		if (category) {
+			return apiGetProductsByCategory(category, params)
 		}
+		return apiGetProducts(params)
+	} catch (error) {
+		console.error(error)
+		throw new Error("Failed to fetch products")
+
 	}
+}
 
 // Функция для получения одного товара
 export const fetchProductById = async (id: string): Promise<IProduct> => {
-	try {
-		const response = await axiosInstance.get<IProduct>(`/products/${id}`)
+	return apiGetProductById(id)
+};
 
-		return response.data
+// Получить продукты по категории (без бесконечной прокрутки)
+export const fetchProductsByCategory = async (
+	category: string,
+	params?: Partial<ProductsQueryParams>
+): Promise<ProductsResponse> => {
+	const query = {
+		limit: params?.limit ?? PRODUCTS_PER_PAGE,
+		skip: params?.skip ?? 0,
+		q: params?.q,
 	}
-	catch (error) {
-		console.error(error)
-		throw new Error('Не удалось получить товар')
-	}
+	return apiGetProductsByCategory(category, query)
 };
 
 export function useInfiniteProducts({ category }: { category?: string | null }) {
@@ -63,6 +60,37 @@ export function useInfiniteProducts({ category }: { category?: string | null }) 
 		},
 		initialPageParam: 0,
 	})
+}
+
+// Хук для одного товара
+export const useProduct = (id?: string) => {
+	return useQuery({
+		queryKey: ['product', id ?? null],
+		queryFn: async () => {
+			if (!id) throw new Error('Отсутствует id товара');
+			return fetchProductById(id);
+		},
+		enabled: !!id,
+	});
+}
+
+// Хук для связанных товаров по категории (исключая текущий id)
+export const useRelatedProducts = (
+	category?: string,
+	excludeId?: number,
+	options?: { enabled?: boolean; limit?: number }
+) => {
+	return useQuery({
+		queryKey: ['related', category ?? null, excludeId ?? null, options?.limit ?? PRODUCTS_PER_PAGE],
+		queryFn: async () => {
+			if (!category) return [] as IProduct[];
+			const data = await fetchProductsByCategory(category, { limit: options?.limit ?? PRODUCTS_PER_PAGE });
+			const filtered = data.products.filter(p => (excludeId ? p.id !== excludeId : true));
+			return filtered;
+		},
+		enabled: options?.enabled ?? !!category,
+		initialData: [] as IProduct[],
+	});
 }
 
 // Хук для получения товаров со скидкой
