@@ -43,7 +43,7 @@ const RelatedProduct = ({ productItem }: { productItem: IProduct }) => {
 
 				{/* Название товара */}
 				< Link href={`/products/${productItem.id}`} className="h-[45px]" >
-					<h3 className=" text-[10px] text-black-100 md:text-[16px] overflow-hidden text-ellipsis line-clamp-3 md:line-clamp-2" >
+					<h3 className=" text-[10px] font-medium text-black-100 md:text-[16px] overflow-hidden text-ellipsis line-clamp-3 md:line-clamp-2" >
 						{productItem.title}
 					</h3>
 				</Link >
@@ -67,7 +67,7 @@ const RelatedProduct = ({ productItem }: { productItem: IProduct }) => {
 					{/* Кнопка "В корзину" */}
 				</div >
 				<button
-					className="w-full py-2.5 px-4 text-green-100 text-sm border border-green-100 rounded-sm transition-transform duration-200 ease-out hover:bg-orange-100  hover:-translate-y-0.5 hover:text-white hover:shadow-sm md:p-2  md:text-[16px]"
+					className="w-full py-2.5 font-medium px-4 text-green-100 text-sm border border-green-100 rounded-sm transition-transform duration-200 ease-out hover:bg-orange-100  hover:-translate-y-0.5 hover:text-white hover:shadow-sm md:p-2  md:text-[16px]"
 				>
 					В корзину
 				</button>

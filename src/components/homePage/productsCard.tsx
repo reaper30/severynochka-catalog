@@ -3,6 +3,8 @@ import { Card, CardBody, CardFooter } from "@heroui/react";
 import Link from "next/link";
 import Image from "next/image";
 import { useInfiniteProducts } from "../../hooks/useProducts";
+import { Heart } from 'lucide-react';
+
 
 const ProductsCartBlock = () => {
 	const { data } = useInfiniteProducts({})
@@ -13,15 +15,14 @@ const ProductsCartBlock = () => {
 	const discountedPrice = product.price * (1 - (product.discountPercentage ?? 0) / 100)
 
 	return (<>
-		<Card className="hover:shadow-lg transition-shadow w-[272px] h-[349px]">
-			<CardBody className="p-0 relative">
+		<Card className=" hover:shadow-lg transition-shadow w-[272px] h-[349px]">
+			<CardBody className=" p-0 relative">
 				<Link href={`/products/${product.id}`}>
 					<div className="relative overflow-hidden bg-white w-full h-[272px]">
 						{/* Бейдж скидки */}
 						{product.discountPercentage > 0 && (
 							<div
-								className="absolute top-2 left-2 z-10 px-2 py-1 text-white text-sm font-bold rounded"
-								style={{ backgroundColor: '#FF6633' }}
+								className="absolute top-2 left-2 px-2 py-1 text-white text-sm font-medium rounded"
 							>
 								-{Math.round(product.discountPercentage)}%
 							</div>
@@ -29,24 +30,10 @@ const ProductsCartBlock = () => {
 
 						{/* Кнопка избранное */}
 						<button
-							className="absolute top-2 right-2 z-10"
+							className="absolute top-2 right-2 bg-amber-200"
 							onClick={(e) => e.preventDefault()}
 						>
-							<svg
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-								className="hover:fill-red-500 transition"
-							>
-								<path
-									d="M12.001 4.529C10.035 2.402 6.818 2.049 4.519 4.059C2.22 6.069 1.977 9.482 3.962 11.768L11.491 20.115C11.712 20.36 12.086 20.383 12.335 20.169L20.039 12.771C22.014 10.484 21.779 7.071 19.481 5.061C17.182 3.051 13.966 3.404 12.001 4.529Z"
-									stroke="#C1C1C1"
-									strokeWidth="1.5"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-							</svg>
+							<Heart strokeWidth={0.5} />
 						</button>
 
 						{/* Изображение товара */}
@@ -61,28 +48,28 @@ const ProductsCartBlock = () => {
 				</Link>
 			</CardBody >
 
-			<CardFooter className="flex-col items-start gap-2 p-3 pt-2">
+			<CardFooter className=" flex-col items-start gap-2 p-3 pt-2">
 				{/* Цены */}
 				<div className="flex items-baseline gap-4 w-full">
 					<div>
 						<div className="text-xl font-bold text-gray-900">
 							{discountedPrice.toFixed(2)} ₽
 						</div>
-						<div className="text-xs text-gray-500">С картой</div>
+						<div className="text-xs text-gray-500 font-medium">С картой</div>
 					</div>
 					{product.discountPercentage > 0 && (
 						<div>
 							<div className="text-sm text-gray-400 line-through">
 								{product.price.toFixed(2)} ₽
 							</div>
-							<div className="text-xs text-gray-500">Обычная</div>
+							<div className="text-xs text-gray-500 font-medium">Обычная</div>
 						</div>
 					)}
 				</div>
 
 				{/* Название товара */}
 				<Link href={`/products/${product.id}`} className="w-full">
-					<h3 className="text-sm text-gray-700 line-clamp-2 hover:text-primary transition min-h-[40px]">
+					<h3 className="text-sm font-medium text-gray-700 line-clamp-2 hover:text-primary transition h-[45px]  md:h-12">
 						{product.title}
 					</h3>
 				</Link>

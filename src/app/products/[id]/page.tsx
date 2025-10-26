@@ -1,10 +1,10 @@
 'use client'
 
 import { ProductBreadcrumbs, ProductSummary, ImageSlider, ProductPricing } from '@/components/productPage'
-import { fetchProductById } from '../../../hooks/useProducts'
+import { fetchProductById, useDiscountedProducts } from '@/hooks/useProducts'
 import { IProduct } from '@/types'
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Spinner } from "@heroui/spinner";
 import { axiosInstance } from '@/services/instance'
 import RatingHistogram from '@/components/productPage/RatingHistogram'
@@ -13,28 +13,39 @@ import RelatedProduct from '@/components/productPage/relatedProducts'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import debounce from "lodash.debounce"
 import Link from 'next/link'
+import ProductsCard from '@/components/homePage/productsCards/productsCard'
 
 const ProductPage = () => {
 	const { id } = useParams()
 	const productId = Array.isArray(id) ? id[0] : id
-
-
 	const [product, setProduct] = useState<IProduct | null>(null)
 
-	const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]); // Состояние для связанных продуктов
-	const [relatedSlideIndex, setRelatedSlideIndex] = useState(0) // Состояние для слайдера связанных товаров
-	const [visibleCount, setVisibleCount] = useState(2)
+	const [relatedProducts, setRelatedProducts] = useState<IProduct[]>([]); // Массив продуктов в блоке "С жтим товаром покупают"
+	const [relatedSlideIndex, setRelatedSlideIndex] = useState(0) // Состояние для слайдера связанных продуктов
+
+	const [relatedVisibleCount, setRelatedVisibleCount] = useState(2) // Кол-во  карточек в завис. от ширины экрана  в категории "С жтим товаром покупают"
+	const [discountVisibleCount, setDiscountVisibleCount] = useState(6) // Кол-во карточек в завис. от ширины экрана категории "Акции"
+
+	const { data: discountProducts } = useDiscountedProducts()	// Товары по скидке
 
 	const reviewsCount = product?.reviews?.length || 0 // Кол-во отзывов
+	const reviewsSectionRef = useRef<HTMLDivElement | null>(null)
 
 	useEffect(() => {
 		const handleResize = debounce(() => {
 			const width = window.innerWidth
-			setVisibleCount(
+			setRelatedVisibleCount(
 				width >= 1440 ? 4 :
 					width >= 768 ? 3 :
 						2
 			)
+			setDiscountVisibleCount(
+				width >= 1440 ? 4 :
+					width >= 768 ? 3 :
+						6
+			)
+
+
 		}, 250)
 
 		handleResize()
@@ -48,14 +59,14 @@ const ProductPage = () => {
 
 	const handleNext = () => {
 		setRelatedSlideIndex(prev =>
-			prev + visibleCount >= relatedProducts.length
+			prev + relatedVisibleCount >= relatedProducts.length
 				? 0
-				: prev + visibleCount
+				: prev + relatedVisibleCount
 		)
 	}
 
 	const handlePrev = () => {
-		setRelatedSlideIndex(prev => Math.max(prev - visibleCount, 0))
+		setRelatedSlideIndex(prev => Math.max(prev - relatedVisibleCount, 0))
 
 	}
 
@@ -101,7 +112,13 @@ const ProductPage = () => {
 
 			{/* Название товара*/}
 			<div className="flex flex-col rounded-lg  gap-4 mx-3 mb-4 desktop:mx-[116px]">
-				<ProductSummary product={product} reviewsCount={reviewsCount} />
+				<ProductSummary
+					product={product}
+					reviewsCount={reviewsCount}
+					onReviewsClick={() => {
+						reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+					}}
+				/>
 			</div>
 
 			<div className="grid grid-cols-1 auto-rows-auto mx-auto">
@@ -129,15 +146,15 @@ const ProductPage = () => {
 							{/* Контейнер карточек */}
 							<div className="flex justify-between gap-4 md:gap-8 desktop:gap-10">
 								{relatedProducts
-									.slice(relatedSlideIndex, relatedSlideIndex + visibleCount)
+									.slice(relatedSlideIndex, relatedSlideIndex + relatedVisibleCount)
 									.map((relatedProduct) => (
 										<div className="shrink-0 shadow-md rounded-sm gap-2 flex-1" key={relatedProduct.id}>
-											< RelatedProduct productItem={relatedProduct} />
+											<RelatedProduct productItem={relatedProduct} />
 										</div>
 									))}
 							</div>
 
-							{/* Кнопки */}
+							{/* Кнопки для перемотик 	товара */}
 							<div className="flex items-center justify-between gap-4 desktop:hidden">
 								<button
 									aria-label="Показать предыдущие товары"
@@ -151,42 +168,44 @@ const ProductPage = () => {
 								<button
 									aria-label="Показать следующие товары"
 									onClick={handleNext}
-									disabled={relatedSlideIndex + visibleCount >= relatedProducts.length}
+									disabled={relatedSlideIndex + relatedVisibleCount >= relatedProducts.length}
 									className="flex items-center justify-center w-10 h-10 text-black-100 rounded-sm border border-green-100 hover:bg-orange-100 disabled:text-grey-100 disabled:cursor-not-allowed"
 								>
 									<ChevronRight strokeWidth={1} className="w-6 h-6" />
 								</button>
 							</div>
 						</div>
-
 					</div>
 				</section >
 
 
 				{/* Секция "Отзывы" */}
-				< section >
-					<div className="mb-20  flex flex-col gap-4 mx-3 md:mb-25 md:mx-4 desktop:mb-30 desktop:gap-10">
+				<section ref={reviewsSectionRef}>
+					<div className="mb-20 flex flex-col gap-4 mx-3 md:mb-25 md:mx-4 desktop:mx-[116px] desktop:mb-30 desktop:gap-10">
 						<p className="text-black-100 text-xl font-bold md:text-2xl desktop:text-4xl">Отзывы</p>
 						<div className="flex flex-col gap-4 md:flex-row md:gap-8 desktop:gap-[145px]">
 							<RatingHistogram reviews={product.reviews} rating={product.rating} />
 							<Reviews reviews={product.reviews} />
 						</div>
 					</div>
-				</section >
+				</section>
 
 				{/* Секция Акции */}
 				<section >
-					<div className="mx-3">
+					<div className="flex flex-col mx-3 gap-4 md:mx-4 md:gap-8 desktop:mx-[116px] desktop:gap-10">
 						{/* Текст акции + все акции */}
 						<div className="flex justify-between items-center">
-							<p className="text-xl text-black-100">Акции</p>
+							<p className="text-xl text-black-100 md:text-2xl font-bold desktop:text-4xl">Акции</p>
 							<Link href="/" className="flex gap-2 items-center">
-								<p className="text-[16px] text-grey-100">Все акции</p>
+								<p className="text-[16px] text-grey-100 md:text-[16px] md:text-black-100 font-medium">Все акции</p>
 								<ChevronRight strokeWidth={1} className="text-grey-100" />
 							</Link>
 						</div>
-						<div className="grid grid-cols-2">
-
+						{/* Блок с продуткми */}
+						<div className="grid grid-cols-2 gap-4 md:gap-8 md:grid-cols-3 desktop:grid-cols-4 desktop:gap-10" >
+							{discountProducts.slice(0, discountVisibleCount).map((discountProduct, i) => (
+								<ProductsCard key={i} productData={discountProduct} />
+							))}
 						</div>
 					</div>
 				</section>

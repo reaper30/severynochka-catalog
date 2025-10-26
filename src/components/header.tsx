@@ -9,13 +9,13 @@ export default function App() {
 
 	return (
 		<div
-			className="mx-auto bg-white-100 py-[11px] shadow-md md:px-5 desktop:px-[116px]"
+			className="bg-white-100 py-[11px] shadow-md md:px-5 desktop:px-[116px]"
 		>
-			<div className=" md:flex md:justify-between desktop:flex justify-between">
+			<div className="  md:flex md:justify-between desktop:flex desktop:justify-between">
 				{/* Лого/название с кнопками */}
-				<div className="flex px-4 justify-between md:items-center md:px-0 md:gap-5 md:mr-[230px] desktop:p-0">
+				<div className="flex px-4 justify-between md:items-center md:px-0 md:gap-5 md:mr-[230px] desktop:gap-10">
 					<Link href="/" className="">
-						<p className="text-[15px] text-lg font-extrabold text-black-100">Магазин</p>
+						<p className="text-[18px] font-bold text-lg font-extrabold  text-black-100">Магазин</p>
 					</Link>
 					<Button
 						color="primary"
@@ -42,7 +42,7 @@ export default function App() {
 									) : (
 										<IconComponent className="text-black-100 mb-1" strokeWidth={1} />
 									)}
-									<p className="text-xs text-black-100">{item.label}</p>
+									<p className="text-xs text-black-100 font-medium">{item.label}</p>
 								</div>
 							);
 						})}
@@ -50,16 +50,16 @@ export default function App() {
 
 
 					{/* Профиль пользователя */}
-					<div className="hidden md:p-[5px] md:flex desktop:flex desktop:items-center desktop:gap-2.5 desktop:p-2">
+					<div className="hidden md:p-[5px] md:flex desktop:flex desktop:items-center desktop:gap-10 desktop:p-2">
 						<User
 							avatarProps={{
 								src: "/Alex.png",
 							}}
 							name="Алексей"
 							classNames={{
-								name: "text-md md:hidden desktop:flex"
+								name: "text-md md:hidden desktop:flex font-medium"
 							}}
-							className=" text-black-100 text-[16px]  font-weight desktop:gap-2.5"
+							className=" text-black-100 text-[16px] desktop:gap-2.5"
 						/>
 						<ChevronDown strokeWidth={1} className="text-black-100 md:hidden desktop:flex" />
 					</div>

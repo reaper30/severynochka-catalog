@@ -47,30 +47,42 @@ const SearchBar = ({ onCategorySelect }: SearchBarProps) => {
 			<form onSubmit={(e) => e.preventDefault()}>
 
 				{/* Input */}
-				<div className="relative ">
+				<div className="relative">
 					<input
 						type="text"
 						value={value}
 						onChange={onChangeInput}
 						placeholder="Найти товар"
-						className="border relative border-green-100 w-full rounded-sm p-2 text-black-100 placeholder:text-grey-100 outline-0"
+						className={`border border-green-100 w-full  shadow-[4px_8px_16px_0_#70C05B33] rounded-sm  p-2 pr-10 text-black-100 placeholder:text-grey-100 outline-0 	${isOpen ? 'rounded-b-none border-b-0' : 'rounded-b-sm'}`}
 					/>
-					<Search strokeWidth={1} className=" absolute right-3 top-1/2 -translate-y-1/2 text-black-100 " />
+					<Search strokeWidth={1} className="absolute right-3 top-1/2 -translate-y-1/2 text-black-100" />
 
-					{/* Строка результатов поиска категорий */}
+					{/* Overlay закрывает dropdown */}
 					{isOpen && filteredCategories.length > 0 && (
-						<div className="absolute top-full left-0 right-0 bg-white border-1 border-t-0 border-green-100 rounded-b-md shadow-lg z-10 max-h-60 overflow-y-auto mt-0.5">
+						<div
+							className="fixed inset-0 z-10 "
+							onClick={() => {
+								setIsOpen(false)
+								setValue('')
+							}}
+						/>
+					)}
+
+					{/*   список результатов поиска */}
+					{isOpen && filteredCategories.length > 0 && (
+
+						<div className=" absolute top-full left-0 right-0 bg-white border border-t-0 border-green-100 rounded-b-sm shadow-[4px_8px_16px_0px_#70C05B33] z-20 max-h-60 overflow-y-auto">
 							{filteredCategories.map(category => (
 								<button
 									key={category.slug}
-									className="w-full text-left px-4 py-2 hover:bg-gray-100 transition first:pt-3"
+									className="w-full text-left px-4 py-2 hover:bg-gray-100 transition first:pt-3 "
 									onClick={() => {
 										onCategorySelect(category.slug)
 										setValue('')
 										setIsOpen(false)
 									}}
 								>
-									<p className="text-black-100">
+									<p className="text-black-100 font-medium text-[16px]">
 										{highlightMatch(category.name, value)}
 									</p>
 								</button>
@@ -78,8 +90,6 @@ const SearchBar = ({ onCategorySelect }: SearchBarProps) => {
 						</div>
 					)}
 				</div>
-
-
 			</form>
 		</div>
 	)

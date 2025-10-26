@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { IReview } from '@/types'
 import { Star, User } from 'lucide-react'
 
@@ -24,21 +24,21 @@ const Reviews = ({ reviews }: ReviewsProps) => {
 						{/* Имя */}
 						<div className="text-sm flex gap-2  text-black-100 items-center">
 							<User strokeWidth={0.5} size={16} className="h-9 w-9 rounded-full border-1 border-frey-300" />
-							<p className="text-[16px]">{r.reviewerName}</p>
+							<p className="text-[16px] font-medium">{r.reviewerName}</p>
 						</div>
 
 						{/* звезды + дата */}
 						<div className="flex gap-4 items-center">
 							<div className="flex items-center gap-1 text-orange-100">
 								{[...Array(5)].map((_, i) => (
-									<Star key={i} size={14} className={i < r.rating ? 'fill-orange-100' : 'fill-grey-200'} strokeWidth={i < r.rating ? 0 : 1} />
+									<Star key={i} size={14} className={i < r.rating ? 'fill-orange-100' : 'fill-grey-200'} strokeWidth={0} />
 								))}
 							</div>
 							<span className="text-[10px]  text-grey-100 md:text-[12px]">{new Date(r.date).toLocaleDateString("ru-RU")}</span>
 						</div>
 
 						{/* Обзор */}
-						<div className=" text-md text-black-100">{r.comment}</div>
+						<div className=" text-md text-black-100 ">{r.comment}</div>
 					</div>
 				))}
 			</div>
@@ -54,7 +54,7 @@ const Reviews = ({ reviews }: ReviewsProps) => {
 						</div>
 					</div>
 					<textarea value={comment} onChange={e => setComment(e.target.value)} placeholder="Отзыв" className=" border border-grey-200 placeholder-black-100 text-black-100 px-4 py-2 rounded h-25" />
-					<button className="bg-orange-200 text-orange-100 p-2 w-[188px] rounded-sm ">Отправить отзыв</button>
+					<button className="bg-orange-200 text-orange-100 p-2 w-[188px] rounded-sm font-rubik">Отправить отзыв</button>
 				</div>
 			</form>
 

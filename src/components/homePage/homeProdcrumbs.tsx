@@ -13,13 +13,13 @@ interface IHomePageBreadcrumbs {
 const HomePageBreadcrumbs = () => {
 
 	const breadcrumbsArr: IHomePageBreadcrumbs[] = [
-		{ id: 0, href: "/", title: "Главная", style: "text-[10px] md:text-xs" },
-		{ id: 1, href: "/", title: "Поиск", style: "text-[10px] font-light md:text-xs" },
+		{ id: 0, href: "/", title: "Главная", style: "text-[10px] md:text-xs font-medium" },
+		{ id: 1, href: "/", title: "Поиск", style: "text-[10px] font-light md:text-xs font-medium" },
 	]
 
 	return (
 		// Навигация по сайту
-		<div className="flex items-center mt-2 mb-4 ml-3 gap-1 md:gap-2 md:mt-4 md:ml-4 desktop:mb-6 desktop:ml-[116px]">
+		<div className="flex items-center mt-2 mb-4 ml-3 gap-1 md:gap-2 md:mt-4 md:ml-4 desktop:gap-4 desktop:mb-6 desktop:ml-[116px]">
 			{breadcrumbsArr.map((item, i: number) => (
 				<Fragment key={item.id}>
 					<Link

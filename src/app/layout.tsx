@@ -1,14 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Geist_Mono, Rubik } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/providers/provider";
-import Header from "@/components/homePage/header";
-import Footer from "@/components/homePage/footer";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import { Toaster } from 'react-hot-toast';
 
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
+const montserrat = Montserrat({
+	variable: "--font-montserrat",
+	subsets: ["latin", "cyrillic"],
+	weight: ["300", "400", "500", "600", "700"],
+	display: "swap",
+});
+
+const rubik = Rubik({
+	variable: "--font-rubik",
+	subsets: ["latin", "cyrillic"],
+	weight: ["300", "400", "500", "600", "700"],
+	display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -29,15 +39,16 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`${montserrat.variable} ${geistMono.variable} ${rubik.variable} antialiased`}
 			>
 				<Providers>
-					<div className="w-full bg-white min-h-screen">
+					<div className="w-full bg-white min-h-screen flex flex-col">
 						<Header />
-						{children}
+						<main className="flex-1">{children}</main>
 						<Footer />
 					</div>
 				</Providers>
+				<Toaster />
 			</body>
 		</html>
 	);

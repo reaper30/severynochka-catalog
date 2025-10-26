@@ -10,7 +10,7 @@ const ProductsCardBlock = ({ category }: { category?: string | null }) => {
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useInfiniteProducts({ category })
 
 	if (isLoading) return <Spinner color="warning" className="flex justify-center items-center py-12" />;
-	if (isError) return <div>Ошибка при загрузке</div>;
+	if (isError) return <div className="text-center text-black-100 text-xl">Ошибка при загрузке</div>;
 	if (!data || data.pages.length === 0) return <div>Нет товаров</div>;
 
 	// Проверка на pages и products не !== unedfined
@@ -28,9 +28,9 @@ const ProductsCardBlock = ({ category }: { category?: string | null }) => {
 	return (
 		<>
 			{/* Карточки товаров */}
-			<div className="grid grid-cols-2 mx-auto gap-4 mr-2 ml-4 mb-6  md:grid-cols-3 md:gap-8 md:mx-4 desktop:grid-cols-4 desktop:gap-10 desktop:mx-29 desktop:mb-12 ">
+			<div className=" grid grid-cols-2 mx-auto gap-4 mr-2 ml-4 mb-6  md:grid-cols-3 md:gap-8 md:mx-4 desktop:grid-cols-4 desktop:gap-10 desktop:mx-29 desktop:mb-12 ">
 				{allProducts?.map((product: IProduct) => (
-					<ProductsCard key={product.id} productItem={product} />
+					<ProductsCard key={product.id} productData={product} />
 				)
 				)}
 			</div>
@@ -42,7 +42,7 @@ const ProductsCardBlock = ({ category }: { category?: string | null }) => {
 						className=" px-6 py-2 text-[16px] border border-grey-200 rounded-sm bg-white-100 hover:border-orange-100">
 						{isFetchingNextPage ? (
 							<div className="flex items-center justify-center gap-2">
-								<Spinner size="sm" />
+								<Spinner color="warning" size="sm" />
 								<span>Загрузка...</span>
 							</div>
 						) : (

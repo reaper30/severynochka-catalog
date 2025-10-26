@@ -1,15 +1,17 @@
 "use client"
 
-import { Heart, MessageCircle, Share2, Star } from "lucide-react"
+import { Heart, Star } from "lucide-react"
 import { IProduct } from "@/types"
 import { getReviewWord } from "@/utils"
+import ShareButton from "./ShareButton"
 
 interface ProductSummaryProps {
 	product: IProduct
 	reviewsCount: number
+	onReviewsClick?: () => void
 }
 
-const ProductSummary = ({ product, reviewsCount }: ProductSummaryProps) => {
+const ProductSummary = ({ product, reviewsCount, onReviewsClick }: ProductSummaryProps) => {
 	if (!product) return null;
 
 	const rating = product.rating ?? 0
@@ -17,15 +19,15 @@ const ProductSummary = ({ product, reviewsCount }: ProductSummaryProps) => {
 	return (
 		<>
 			{/* Названик продукта */}
-			< h1 className=" text-xl font-semibold text-black-100" >
+			<h1 className="text-xl font-bold text-black-100">
 				{product.title}, Россия, {product.weight} г
-			</h1 >
+			</h1>
 
 			<div className="flex flex-col gap-2 md:flex-row md:gap-6">
 				{/* Блок артикул + Рейтинг звездочки + n-отзывов	 */}
 				<div className="flex flex-wrap items-center sm:gap-4 md:gap-6">
 					{/* Артикул */}
-					<span className="text-[10px] text-black-100">арт. {product.sku}</span>
+					<span className="text-[10px] font-medium text-black-100">арт. {product.sku}</span>
 					{/* Звездочки */}
 					<div className="flex gap-1 ">
 						{[...Array(5)].map((_, i) => {
@@ -42,30 +44,34 @@ const ProductSummary = ({ product, reviewsCount }: ProductSummaryProps) => {
 						})}
 					</div>
 					{/* n-отзывов */}
-					<span className="text-xs text-black-100 underline underline-offset-4">
+					<button
+						type="button"
+						onClick={() => onReviewsClick?.()}
+						className="cursor-pointer text-xs text-black-100 font-medium underline underline-offset-4 transition-colors hover:text-green-100"
+					>
 						{reviewsCount} {getReviewWord(reviewsCount)}
-					</span>
+					</button>
 				</div>
 
 
 				{/* Кнопки "поделиться и в избранное" */}
-				<div className="flex gap-4">
-					<button className="text-black-100 flex gap-2 items-center">
-						<Share2 size={24} strokeWidth={1} />
-						<span className="text-[10px]">
-							Поделиться
-						</span>
-					</button>
+				<div className="flex gap-4 cursor-pointer">
+					{/* Поделиться */}
+					<div className="p-1" role="button">
+						<ShareButton
+							url={typeof window !== 'undefined' ? window.location.href : ''}
+							title={product.title}
+						/>
+					</div>
+
 					{/* В избранное */}
 					<button className="text-black-100 flex gap-2 items-center">
 						<Heart size={24} strokeWidth={1} />
-						<span className="text-[10px]">
+						<span className="font-medium text-[10px]">
 							В избранное
 						</span>
 					</button>
 				</div>
-				{/* Поделиться */}
-
 			</div>
 		</>
 	)

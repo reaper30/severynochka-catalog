@@ -4,12 +4,11 @@ import { Star } from 'lucide-react'
 import { IReview } from '@/types'
 
 interface RatingHistogramProps {
-	reviews: IReview[] | null,
+	reviews?: IReview[] | null,
 	rating: number
 }
 
 const RatingHistogram = ({ reviews, rating }: RatingHistogramProps) => {
-	console.log(reviews);
 
 	const counts = [5, 4, 3, 2, 1].map((rating) => ({
 		rating,
@@ -17,7 +16,7 @@ const RatingHistogram = ({ reviews, rating }: RatingHistogramProps) => {
 	}))
 
 	return (
-		// Общий рейтинш продукта
+		// Общий рейтинu продукта
 		<div className=" flex flex-col gap-4">
 			<div className="flex gap-1 items-center">
 				{[...Array(5)].map((_, i) => {
@@ -53,7 +52,7 @@ const RatingHistogram = ({ reviews, rating }: RatingHistogramProps) => {
 						</div>
 
 						{/* Кол-во отзывов */}
-						<p className=" text-[16px] text-black-100 ">{count}</p>
+						<p className=" text-[16px]  text-black-100 ">{count}</p>
 					</div>
 				))}
 			</div>

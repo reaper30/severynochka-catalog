@@ -3,9 +3,9 @@
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { Fragment } from "react"
+import { useParams } from "next/navigation"
 
 interface IProductPageBreadcrumbs {
-	id: number,
 	href: string
 	title: string
 	category?: string,
@@ -18,20 +18,22 @@ interface ProductBreadcrumbsProps {
 }
 
 const ProductBreadcrumbs = ({ title, category }: ProductBreadcrumbsProps) => {
+	const { id } = useParams()
 
 	const breadcrumbsArr: IProductPageBreadcrumbs[] = [
-		{ id: 0, href: "/", title: "Главная", style: "text-[10px] text-black-100 md:text-xs" },
-		{ id: 1, href: "/", title: "Каталог", style: "text-[10px] text-black-100  md:text-xs" },
-		{ id: 2, href: `/?${category}=${encodeURIComponent(category)}`, title: category, style: "text-[10px] text-black-100 font-light md:text-xs" },
+		{ href: "/", title: "Главная", style: "text-[10px] font-medium text-black-100 md:text-xs" },
+		{ href: "/", title: "Каталог", style: "text-[10px] font-medium text-black-100  md:text-xs" },
+		{ href: `/?category=${encodeURIComponent(category)}`, title: category, style: "text-[10px] font-medium text-black-100 md:text-xs" },
+		{ href: `/products/${id}`, title: title, style: " text-grey-100 text-[10px] md:text-xs" },
 	]
 
 	return (
 		<>
 			{breadcrumbsArr.map((item, i) => (
-				<Fragment key={item.id}>
+				<Fragment key={i}>
 					<Link
 						href={item.href}
-						className={`${item.style} `}
+						className={`${item.style} ${i === breadcrumbsArr.length - 1 ? "pointer-events-none" : ""}`}
 					>
 						{item.title}
 					</Link>
@@ -40,12 +42,7 @@ const ProductBreadcrumbs = ({ title, category }: ProductBreadcrumbsProps) => {
 					}
 				</Fragment>
 			))}
-			<div className="flex items-center gap-1">
-				<ChevronRight strokeWidth={1} className="text-black-100" />
-				<p className="text-grey-100 text-[10px] md:text-xs">
-					{title}
-				</p>
-			</div>
+
 		</>
 	)
 }

@@ -18,15 +18,15 @@ const ProductPricing = ({ product }: ProductPricingProps) => {
 	return (
 		<div>
 			{/* Цена  */}
-			<div className="grid grid-cols-2 items-center" >
+			<div className="grid grid-cols-2 items-cente" >
 				<div className="flex items-center justify-between col-span-2">
 					<div>
 						<p className="text-black-100 text-xl md:text-lg md:mb-1 desktop:mb-[6px] desktop:text-2xl">{changeMark(product.price)} ₽</p>
-						<p className="text-grey-100 text-[10px] md:text-xs">Обычная цена</p>
+						<p className="text-grey-100 font-medium text-[10px] md:text-xs">Обычная цена</p>
 					</div>
 					<div >
-						<p className="text-end text-black-100 text-2xl font-extrabold desktop:text-4xl">{changeMark(discountPrice.toFixed(2))} ₽</p>
-						<p className="flex justify-end items-center gap-2 text-grey-100 text-[10px] md:text-xs">С картой северянки <Info className="text-black-100 " strokeWidth={1} /></p>
+						<p className="text-end text-black-100 text-2xl font-bold desktop:text-4xl">{changeMark(discountPrice.toFixed(2))} ₽</p>
+						<p className="flex justify-end font-medium items-center gap-2 text-grey-100 text-[10px] md:text-xs">С картой северянки <Info className="text-black-100 " strokeWidth={1} /></p>
 					</div>
 				</div>
 
@@ -38,26 +38,26 @@ const ProductPricing = ({ product }: ProductPricingProps) => {
 					</Button>
 					<div className="flex items-center justify-center gap-2">
 						<Image src="/bonus.svg" alt="Бонусы" width={24} height={24} />
-						<p className="text-green-100 py-[8.5px] text-[10px]">Вы получаете 10 бонусов</p>
+						<p className="text-green-100 font-medium py-[8.5px] text-[10px]">Вы получаете 10 бонусов</p>
 					</div>
 					<div className="flex items-center py-1 gap-2">
 						<BellOff strokeWidth={1} className="text-black-100" />
-						<p className="text-black-100 text-[10px]">Уведомить о снижении цены</p>
+						<p className=" font-medium text-black-100 text-[10px]">Уведомить о снижении цены</p>
 					</div>
 				</div>
 				{/* Бренд, страна, упаковка */}
 				<div className="col-span-2">
 					<div className="flex justify-between items-center px-2 text-[10px] h-6.5 text-black-100 bg-grey-300 md:text-xs">
-						<span className="text-gray-600 ">Бренд</span>
-						<span className="font-semibold  ">{product.brand}</span>
+						<span className="text-gray-600 font-medium">Бренд</span>
+						<span className="font-bold  ">{product.brand}</span>
 					</div>
 					<div className="flex justify-between items-center px-2 text-[10px] h-6.5 text-black-100 md:text-xs">
-						<span className="text-gray-600 	 ">Страна</span>
-						<span className="font-semibold capitalize  ">Россия</span>
+						<span className="text-gray-600 font-medium	">Страна производителя</span>
+						<span className="font-bold capitalize  ">Россия</span>
 					</div>
 					<div className="flex justify-between items-center px-2 text-[10px] h-6.5 text-black-100 bg-grey-300 md:text-xs">
-						<span className="text-gray-600 	 ">Упаковка </span>
-						<span className="font-semibold  ">{product.weight} г</span>
+						<span className="text-gray-600 font-medium">Упаковка </span>
+						<span className="font-bold">{product.weight} г</span>
 					</div>
 				</div>
 			</div>
