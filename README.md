@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Северяночка — каталог товаров
 
-## Getting Started
+Небольшой e-commerce каталог на Next.js (App Router): список и поиск товаров, фильтрация по категориям, страница товара с отзывами, рейтингом, слайдером изображений и блоками «С этим товаром покупают» и «Акции».
 
-First, run the development server:
+## Возможности
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Главная страница с поиском и фильтрацией по категории (через query-параметр `?category=`)
+- Пагинация «Загрузить ещё» (инфинитный список на React Query)
+- Страница товара `/products/[id]` с:
+	- крошками (Home → Каталог → Категория → Товар)
+	- слайдером изображений и миниатюрами
+	- ценами и скидками
+	- рейтингом и отзывами
+	- «С этим товаром покупают» (родственные по категории)
+- Тосты и базовые UI-компоненты (HeroUI)
+
+## Технологии
+
+- Next.js 15 (App Router) + React 19 + TypeScript
+- TanStack React Query v5 — загрузка данных, кеширование, состояния загрузки/ошибок
+- Axios — HTTP-клиент (синглтон `axiosInstance`)
+- Tailwind CSS v4 — стили
+- HeroUI — компоненты UI
+- Lucide Icons, Swiper, react-hot-toast
+
+## Архитектура
+
+- `src/services/` — слой данных (работа с API)
+	- `instance.tsx` — настроенный axios с `baseURL`
+	- `products.ts` — функции: `getProducts`, `getProductsByCategory`, `getProductById`, нормализация данных (например, `reviews: []` по умолчанию)
+- `src/hooks/` — React-хуки (бизнес-логика на стороне клиента)
+	- `useProducts.tsx` — `useInfiniteProducts`, `useProduct`, `useRelatedProducts`, `useDiscountedProducts`
+- `src/app/` — маршруты (App Router)
+	- `/page.tsx` — главная
+	- `/products/[id]/page.tsx` — страница товара
+- `src/components/` — презентационные компоненты
+
+Разделение сервисы — для данных, хуки — для React: сервисы не зависят от React, а хуки отвечают за кеширование, состояния и интеграцию с UI.
+
+## Структура проекта (сокращённо)
+
+```
+src/
+	app/
+		page.tsx
+		products/[id]/page.tsx
+		layout.tsx
+	components/
+		homePage/*
+		productPage/*
+	hooks/
+		useProducts.tsx
+	services/
+		instance.tsx
+		products.ts
+	types/*
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Маршрутизация
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Главная: `/` — использует `useSearchParams` и пушит `?category=...`
+- Товар: `/products/[id]` — получает `id` через `useParams`
+- Крошки формируют ссылки на главную, «каталог», категорию и текущий товар
 
-## Learn More
+## Работа с API и состояния
 
-To learn more about Next.js, take a look at the following resources:
+- Все запросы идут через `services/products.ts`
+- Хуки React Query возвращают `data`, `isLoading`, `isError`, `error`
+- В UI предусмотрены понятные состояния загрузки и ошибок (спиннеры/сообщения)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Требования
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Node.js 18.18+ или 20+
+- npm 9+ (или совместимый менеджер пакетов)
 
-## Deploy on Vercel
+## Запуск (Windows PowerShell)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1) Установить зависимости:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```powershell
+npm install
+```
+
+2) (Опционально) Создать `./.env.local` и задать API-URL, если нужен другой бэкенд:
+
+```dotenv
+NEXT_PUBLIC_API_URL=https://dummyjson.com
+```
+
+3) Запустить dev-сервер (используется Turbopack):
+
+```powershell
+npm run dev
+```
+
+Сайт будет доступен на http://localhost:3000
+
+### Продакшн-сборка
+
+```powershell
+npm run build
+npm start
+```
+
+### Линтинг
+
+```powershell
+npm run lint
+```
+
+## Полезные заметки
+
+- Конфиг изображений: в Next 15 предпочтительно использовать `images.remotePatterns` вместо устаревшего `images.domains`.
+- `services/products.ts` нормализует данные (например, `reviews` как массив), чтобы UI оставался стабильным.
+- Если нужен единый экран ошибок для сегмента — добавьте `app/<segment>/error.tsx` (клиентский компонент). Для 404 — `not-found.tsx` + `notFound()` (в серверных компонентах).
+
